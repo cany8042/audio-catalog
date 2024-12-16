@@ -1,179 +1,300 @@
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Catalog</title>
+    <style>
+        .audio-item {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .download-button {
+            padding: 10px 10px;
+            background-color: #4CAF50; /* Зеленый цвет кнопки */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Audio Catalog</h1>
+    <div id="container"></div>
+    <script>
+        const container = document.getElementById('container');
+
+        function createAudio(sound) {
+            const audioItem = document.createElement('div');
+            audioItem.className = 'audio-item';
+            audioItem.innerHTML = `<h3>${sound.title || sound.filePath}</h3><audio controls></audio>`;
+
+            const audioElement = audioItem.querySelector('audio');
+            fetch(sound.filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} for ${sound.filePath}`);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    audioElement.src = url;
+                    const downloadButton = document.createElement('button');
+                    downloadButton.className = 'download-button';
+                    downloadButton.textContent = ' скачать🎶';
+                    downloadButton.addEventListener('click', () => {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = sound.title || sound.filePath.split('/').pop();
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
+                    audioItem.appendChild(downloadButton);
+                })
+                .catch(error => {
+                    console.error('Error fetching audio:', error);
+                    audioItem.innerHTML += `<p>Ошибка загрузки: ${error.message}</p>`;
+                });
+
+            container.appendChild(audioItem);
+        }
+
+        fetch('sound.php')
+            .then(response => response.json())
+            .then(sounds => {
+                sounds.forEach(createAudio);
+            })
+            .catch(error => {
+                console.error('Error fetching audio data:', error);
+                container.innerHTML = '<p>Ошибка загрузки каталога аудио.</p>';
+            });
+    </script>
+</body>
+</html> -->
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio catalog</title>
+</head>
+
+<body>
+    <p>Home page</p>
+    <div class="container"></div>
+</body>
+
+<script>
+    let createAudio = (uri) =>
+    {
+        const mainClassElement = "container";
+        let mainDiv = document.getElementsByClassName(mainClassElement)[0];
+
+        let soundDiv = document.createElement("div");
+        let soundAudio = document.createElement("audio");
+        soundAudio.setAttribute("controls", "");
+        soundAudio.setAttribute("src", uri);
+
+        soundDiv.appendChild(soundAudio);
+        mainDiv.appendChild(soundDiv);
+    }
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "sound.php", false);
+    xhr.send();
+
+    const soundsAsObjects = JSON.parse(xhr.response);
+
+    for(let sound of soundsAsObjects)
+    {
+        createAudio(sound.filePath);
+    }
+</script>
+
+</html> -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Audio catalog</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-		crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-		crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Catalog</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #4e56c2; /* Светло-синий цвет фона */
+            overflow: hidden; /* Скрываем прокрутку */
+            position: relative; /* Для позиционирования снежинок */
+        }
+
+        .audio-item {
+            margin: 10px 0;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px; /* Начальная позиция снежинки */
+            color: white; /* Цвет снежинки */
+            font-size: 1em; /* Размер снежинки */
+            pointer-events: none; /* Игнорируем взаимодействие с мышью */
+            animation: fall linear infinite; /* Анимация падения */
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(100vh); /* Падает до низа экрана */
+            }
+        }
+    </style>
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-lg bg-body-tertiary">
-		<div class="container-fluid row justify-content-end">
-			<button class="btn btn-outline-success col-2" id="uploadSound">Upload sound</button>
-			<button class="btn btn-outline-success col-2" id="regModalBtn">Registration</button>
-		</div>
-	</nav>
-	<div class="row mb-5">
-		<div class="col-5"></div>
-		<h1 class="col-2">Home page</h1>
-	</div>
-	<div class="container"></div>
-	<div class="row fixed-bottom">
-		<audio controls autoplay></audio>
-	</div>
+    <div class="container mt-5">
+        <h1 class="text-center">💃Audio Catalog🕺</h1>
+        <p class="text-center">🎼Welcome to the audio catalog of the Top Academy🎼</p>
+        
+        <!-- Поле для поиска и кнопка -->
+        <div class="form-group d-flex">
+            <input type="text" id="searchInput" class="form-control" placeholder="Поиск по названию...">
+            <button id="searchButton" class="btn btn-primary ml-3">🔍 Поиск</button>
+        </div>
+        
+        <div class="row" id="audioContainer"></div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        let currentAudio = null; // Переменная для хранения текущего аудио
+        const sounds = [
+        {
+        title: "Король и Шут - Адель.mp3",
+        
+    },
+    {
+        title: "Король и Шут -  Два друга.mp3",
+        
+    },
+    {
+        title: "Король и Шут - Дурак и молния.mp3"
+        
+    }
+        ]; // Массив для хранения загруженных аудиофайлов
 
-	<div id="regModal" class="modal" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<form class="col-12">
-						<div class="text-center">
-							<h1>Set your data</h1>
-						</div>
-						<div class="mb-3">
-							<label for="exampleInputLogin" class="form-label">Login</label>
-							<input type="text" class="form-control" id="LoginInput" aria-describedby="emailHelp">
-						</div>
-						<div class="mb-3">
-							<label for="exampleInputPassword1" class="form-label">Password</label>
-							<input type="password" class="form-control" id="LoginPassword">
-						</div>
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-						<button id="regBtn" type="button" class="btn btn-primary">Submit</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+        function createAudio(sound) {
+            const audioItem = document.createElement('div');
+            audioItem.className = 'col-12 audio-item'; 
+            audioItem.innerHTML = `
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">${sound.title || sound.filePath.split('/').pop()}</h5>
+                        <audio controls class="w-100"></audio>
+                        <a href="#" class="btn btn-primary mt-2 download-link">🎶Скачать🎶</a>
+                    </div>
+                </div>
+            `;
 
-	<div id="uploadSoundModal" class="modal" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<form class="col-12" enctype="multipart/form-data" method="POST">
-						<div class="text-center">
-							<h1>Set your sound</h1>
-						</div>
-						<div class="mb-3">
-							<label for="soundNameInput" class="form-label">Sound name</label>
-							<input type="text" class="form-control" id="soundNameInput" name="soundName">
-						</div>
-						<div class="mb-3">
-							<input class="form-control" type="file" name="audio" id="audioFile" accept="audio/*"
-								required>
-						</div>
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+            const audioElement = audioItem.querySelector('audio');
+            const downloadLink = audioItem.querySelector('.download-link');
+
+            //fetch(sound.filePath)
+            //   .then(response => response.blob())
+            //  .then(blob => {
+            //     const url = URL.createObjectURL(blob);
+            //    audioElement.src = url;
+            //   downloadLink.href = url;
+            //  downloadLink.download = sound.title || sound.filePath.split('/').pop();
+            //})
+            //.catch(error => console.error('Error fetching audio:', error));
+
+            // Добавляем обработчик события на аудио
+            audioElement.addEventListener('play', () => {
+                // Если есть текущее аудио, останавливаем 
+                if (currentAudio && currentAudio !== audioElement) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0; // Сбрасываем время
+                }
+                currentAudio = audioElement; // Устанавливаем текущее аудио
+            });
+
+            const container = document.getElementById('audioContainer');
+            container.appendChild(audioItem);
+        }
+
+        //let xhr = new XMLHttpRequest();
+        //xhr.open("GET", "sound.php", false);
+        //xhr.send();
+
+        //const soundsAsObjects = JSON.parse(xhr.response);
+        //sounds.push(...soundsAsObjects); // Сохраняем загруженные звуки в массив
+
+        for (let sound of sounds) {
+            createAudio(sound);
+        }
+
+        // Функция для создания снежинки
+        const createSnowflake = () => {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '❄'; // Символ снежинки
+            snowflake.style.left = Math.random() * 100 + 'vw'; // Случайная позиция по горизонтали
+            snowflake.style.fontSize = Math.random() * 1 + 0.5 + 'em'; // Случайный размер
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Случайная продолжительность
+            snowflake.style.opacity = Math.random(); // Случайная прозрачность
+
+            document.body.appendChild(snowflake);
+
+            // Удаляем снежинку после завершения анимации
+            snowflake.addEventListener('animationend', () => {
+                snowflake.remove();
+            });
+        };
+
+        // Создаем снежинки каждые 200 миллисекунд
+        setInterval(createSnowflake, 200);
+
+        // Функция поиска
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        const performSearch = () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const container = document.getElementById('audioContainer');
+            container.innerHTML = ''; // Очищаем контейнер
+            
+            // Фильтруем и создаем аудиофайлы, соответствующие запросу
+            for (let sound of sounds) {
+                if (sound.title.toLowerCase().includes(searchTerm)) {
+                    createAudio(sound);
+                }
+            }
+        };
+
+        // Обработчик события для кнопки поиска
+        searchButton.addEventListener('click', performSearch);
+
+        // Обработчик события для нажатия клавиши Enter
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
 </body>
-
-<script>
-	var regModalBtn = document.getElementById("regModalBtn");
-	var regBtn = document.getElementById("regBtn");
-
-	const myModalAlternative = new bootstrap.Modal(document.getElementById("regModal"));
-
-	regModalBtn.onclick = function () 
-	{
-		myModalAlternative.show();
-	}
-
-	regBtn.onclick = function ()
-	{
-		let data = `{"login":"${document.getElementById("LoginInput").value}", "password": "${document.getElementById("LoginPassword").value}"}`;
-		let xhr = new XMLHttpRequest();
-		xhr.open("POST", "app.php", false);
-		xhr.send(data);
-
-		alert(xhr.response);
-	}
-</script>
-
-<script>
-	let openUploadSound = document.getElementById('uploadSound');
-	const uploadSoundModal = new bootstrap.Modal(document.getElementById('uploadSoundModal'));
-
-	openUploadSound.onclick = function () 
-	{
-		uploadSoundModal.show();
-	}
-
-	document.getElementById('uploadSoundModal').addEventListener('submit', (event) =>
-	{
-		event.preventDefault();
-		var formData = new FormData(event.target);
-
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'app.php');
-		xhr.send(formData);
-
-		xhr.onload = () =>
-		{
-			let result = JSON.parse(xhr.response);
-			if (result.status == 'success')
-			{
-				alert('Файл загружен успешно!');
-			}
-			else
-			{
-				alert('Ошибка при загрузке файла.');
-			}
-		};
-	});
-</script>
-
-<script>
-	let createAudio = (uri, audioName, audioAuthor) =>
-	{
-		const mainClassElement = "container";
-		let mainDiv = document.getElementsByClassName(mainClassElement)[0];
-
-		let soundDiv = document.createElement("div");
-		soundDiv.classList.add("row");
-		soundDiv.classList.add("mb-4");
-
-		let playButton = document.createElement("button");
-		playButton.classList.add("col-1");
-		playButton.innerText = "play";
-		playButton.addEventListener("click", () =>
-		{
-			let playerOnWindow = document.getElementsByTagName("audio")[0];
-			playerOnWindow.setAttribute("src", uri);
-		});
-
-		let soundName = document.createElement("p");
-		soundName.classList.add("col-2");
-		soundName.innerText = audioName;
-
-		let usernameSpan = document.createElement("p");
-		usernameSpan.classList.add("col-2");
-		usernameSpan.innerText = audioAuthor;
-
-		soundDiv.appendChild(playButton);
-		soundDiv.appendChild(soundName);
-		soundDiv.appendChild(usernameSpan);
-		mainDiv.appendChild(soundDiv);
-	}
-
-	let xhr = new XMLHttpRequest();
-	xhr.open("GET", "app.php", false);
-	xhr.send();
-
-	const soundsAsObjects = JSON.parse(xhr.response);
-
-	for (let sound of soundsAsObjects)
-	{
-		createAudio(sound.filePath, sound.name, sound.username);
-	}
-</script>
 
 </html>
